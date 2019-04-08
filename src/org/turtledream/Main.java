@@ -6,14 +6,17 @@ import java.net.Socket;
 import java.util.Random;
 
 class Reader{
+
     private InputStream inputStream;
     private  int speed;
     private long lastTime = 0;
+
     Reader(InputStream inputStream, int speed){
         this.inputStream = inputStream;
         this.speed = speed;
     }
-    public int read(byte[] b) throws IOException{
+
+    public synchronized int read(byte[] b) throws IOException{
         int count =  inputStream.read(b);
         long t = 1000 * count / speed;
         long currentTime = System.currentTimeMillis();
@@ -36,17 +39,18 @@ class Reader{
 }
 
 class Server{
-    private static Socket clientSocket;
-    private static ServerSocket serverSocket ;
-    private static BufferedInputStream bufferedInputStream;
-    private static BufferedOutputStream bufferedOutputStream;
-    private static byte[] buffer;
+    private Socket clientSocket;
+    private ServerSocket serverSocket ;
+    private BufferedInputStream bufferedInputStream;
+    private BufferedOutputStream bufferedOutputStream;
+    private byte[] buffer;
 
     public void run() throws IOException {
         serverSocket = new ServerSocket(6400);
         System.out.println("Сервер запущен.");
         job();
     }
+
     public void job() throws IOException {
         clientSocket = serverSocket.accept();
         Socket socket = clientSocket;
@@ -68,7 +72,7 @@ class Server{
     }
 
     public void SendFile(Socket clientSocket) throws IOException {
-        File file = new File("*/Путь к файлу/*");
+        File file = new File("/*Путь к файлу*/");
         try {
             FileInputStream fileInputStream = new FileInputStream(file);
             bufferedInputStream = new BufferedInputStream(fileInputStream);
